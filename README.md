@@ -8,8 +8,11 @@ be used in production.
 
 [Learn more about the Kubernetes Service Catalog](https://medium.com/@prydonius/service-catalog-in-kubernetes-78c0736e3910)
 
+**NOTE**: Works on Kubernetes v1.8.3 + Service Catalog v0.1.2.
 
 ## An existing MariaDB Server
+
+Suppose you already have a MariaDB Server outside the Kubernetes cluster.
 
 ```
 docker run -d --name=mariadb-server -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passw0rd mariadb:10.1.16
@@ -21,25 +24,39 @@ docker run -d --name=mariadb-server -p 3306:3306 -e MYSQL_ROOT_PASSWORD=passw0rd
 docker run -d --name=mariadb-broker -p 8005:8005 -e MARIADB_HOST=10.10.25.250 -e MARIADB_PORT=3306 -e MARIADB_USER=root -e MARIADB_PASS=passw0rd siji/mariadb-broker:1.0.0
 ```
 
+Or using Helm chart:
+
+```
+helm install --name=mariadb-broker charts/mariadb-broker
+```
+
 
 ## Create MariaDB broker in Kubernetes cluster
 
-```
-kubectl apply -f examples/mariadb-broker.yaml
-```
-
-
-## Create MariaDB instance in Kubernetes cluster
+Please update the Broker URL in `examples/mariadb-broker.yaml`.
 
 ```
-kubectl apply -f examples/mariadb-instance.yaml
+kubectl apply -f examples/1.mariadb-broker.yaml
 ```
 
 
-## Create MariaDB binding in Kubernetes cluster
+## Create a MariaDB instance for JPress blog system
 
 ```
-kubectl apply -f examples/mariadb-binding.yaml
+kubectl apply -f examples/2.jpress/2.1.jpress-instance.yaml
+
+kubectl apply -f examples/2.jpress/2.2.jpress-binding.yaml
+
+kubectl apply -f examples/2.jpress/2.3.jpress-blog-system.yaml
 ```
 
 
+## Create a MariaDB instance for Wordpress blog system
+
+```
+kubectl apply -f examples/3.wodpress/3.1.wordpress-instance.yaml
+
+kubectl apply -f examples/3.wodpress/3.2.wordpress-binding.yaml
+
+kubectl apply -f examples/3.wodpress/3.3.wordpress-blog-system.yaml
+```
