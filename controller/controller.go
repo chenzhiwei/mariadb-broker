@@ -49,7 +49,7 @@ func (c *mariadbController) Catalog() (*brokerapi.Catalog, error) {
 }
 
 func (c *mariadbController) CreateServiceInstance(id string, req *brokerapi.CreateServiceInstanceRequest) (*brokerapi.CreateServiceInstanceResponse, error) {
-	if err := client.Install(id); err != nil {
+	if err := client.Create(id); err != nil {
 		return nil, err
 	}
 	glog.Infof("Created MariaDB Service Instance: %v\n", id)
@@ -70,9 +70,9 @@ func (c *mariadbController) RemoveServiceInstance(id string) (*brokerapi.DeleteS
 func (c *mariadbController) Bind(instanceID, bindingID string, req *brokerapi.BindingRequest) (*brokerapi.CreateServiceBindingResponse, error) {
 	host := os.Getenv("MARIADB_HOST")
 	port := os.Getenv("MARIADB_PORT")
-	database := instanceID
-	username := instanceID
-    password := instanceID
+	database := client.HashedValue("db" + instanceID)
+	username := client.HashedValue("user" + instanceID)
+	password := client.HashedValue("pass" + instanceID)
 
 	return &brokerapi.CreateServiceBindingResponse{
 		Credentials: brokerapi.Credential{
